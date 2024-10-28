@@ -223,7 +223,7 @@ public class PostController {
         long size = postQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
+        Page<Post> postPage = new Page<>();
         return ResultUtils.success(postService.getPostVOPage(postPage, request));
     }
 
