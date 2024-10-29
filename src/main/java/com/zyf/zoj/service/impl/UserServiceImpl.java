@@ -3,6 +3,7 @@ package com.zyf.zoj.service.impl;
 import static com.zyf.zoj.constant.UserConstant.USER_LOGIN_STATE;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyf.zoj.common.ErrorCode;
@@ -74,6 +75,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
+            }
+            user.setUserName("用户" + this.count() + "号");
+            boolean updateResult = this.updateById(user);
+            if (!updateResult) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成默认用户昵称失败");
             }
             return user.getId();
         }

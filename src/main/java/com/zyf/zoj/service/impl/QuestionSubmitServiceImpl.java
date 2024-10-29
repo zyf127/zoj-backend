@@ -4,9 +4,11 @@ import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sun.xml.internal.ws.util.CompletedFuture;
 import com.zyf.zoj.common.ErrorCode;
 import com.zyf.zoj.constant.CommonConstant;
 import com.zyf.zoj.exception.BusinessException;
+import com.zyf.zoj.judge.codesandbox.JudgeService;
 import com.zyf.zoj.mapper.QuestionSubmitMapper;
 import com.zyf.zoj.model.dto.questionsumbit.QuestionSubmitAddRequest;
 import com.zyf.zoj.model.dto.questionsumbit.QuestionSubmitQueryRequest;
@@ -23,6 +25,7 @@ import com.zyf.zoj.service.UserService;
 import com.zyf.zoj.utils.SqlUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +50,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
     @Resource
     private UserService userService;
+
+    @Resource
+    @Lazy
+    private JudgeService judgeService;
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
@@ -75,7 +83,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!save) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "提交题目失败");
         }
-        return questionSubmit.getId();
+        // 进行判题
+        Long questionSubmitId = questionSubmit.getId();
+        CompletableFuture.runAsync(() -> {
+            judgeService.doJudge(questionSubmitId);
+        });
+        return questionSubmitId;
     }
 
     @Override
