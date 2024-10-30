@@ -7,7 +7,6 @@ import com.zyf.zoj.model.dto.questionsumbit.JudgeInfo;
 import com.zyf.zoj.model.enums.JudgeInfoMessageEnum;
 import com.zyf.zoj.model.enums.QuestionSubmitStatusEnum;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
