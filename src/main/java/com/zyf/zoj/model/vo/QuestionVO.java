@@ -1,9 +1,6 @@
 package com.zyf.zoj.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.zyf.zoj.model.dto.question.JudgeConfig;
 import com.zyf.zoj.model.entity.Question;
 import lombok.Data;
