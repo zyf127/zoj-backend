@@ -17,6 +17,7 @@ import com.zyf.zojbackendmodel.enums.QuestionSubmitLanguageEnum;
 import com.zyf.zojbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.zyf.zojbackendmodel.vo.QuestionSubmitVO;
 import com.zyf.zojbackendquestionservice.mapper.QuestionSubmitMapper;
+import com.zyf.zojbackendquestionservice.rabbitmq.MyMessageProducer;
 import com.zyf.zojbackendquestionservice.service.QuestionService;
 import com.zyf.zojbackendquestionservice.service.QuestionSubmitService;
 import com.zyf.zojbackendserviceclient.service.JudgeFeignClient;
@@ -30,7 +31,6 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +51,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     @Lazy
     private JudgeFeignClient judgeFeignClient;
+
+    @Resource
+    private MyMessageProducer myMessageProducer;
 
     @Override
     public Long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
@@ -82,9 +85,10 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         // 进行判题
         Long questionSubmitId = questionSubmit.getId();
-        CompletableFuture.runAsync(() -> {
-            judgeFeignClient.doJudge(questionSubmitId);
-        });
+//        CompletableFuture.runAsync(() -> {
+//            judgeFeignClient.doJudge(questionSubmitId);
+//        });
+        myMessageProducer.sendMessage("code_exchange", "my_routing_key", String.valueOf(questionSubmitId));
         return questionSubmitId;
     }
 
@@ -143,7 +147,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
                 .map(questionSubmit -> getQuestionSubmitVO(questionSubmit, loginUser))
                 .collect(Collectors.toList());
         List<Long> userIdList = questionSubmitList.stream().map(QuestionSubmit::getUserId).collect(Collectors.toList());
-        Map<Long, String> userIdNameMap = userFeignClient.listByIds(userIdList).stream().collect(Collectors.toMap(User::getId, User::getUserName));
+        Map<Long, String> userIdNameMap = userFeignClient.listUserByIds(userIdList).stream().collect(Collectors.toMap(User::getId, User::getUserName));
         List<Long> questionIdList = questionSubmitList.stream().map(QuestionSubmit::getQuestionId).collect(Collectors.toList());
         Map<Long, String> questionIdTitleMap = questionService.listByIds(questionIdList).stream().collect(Collectors.toMap(Question::getId, Question::getTitle));
         for (QuestionSubmitVO questionSubmitVO : questionSubmitVOList) {

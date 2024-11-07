@@ -1,6 +1,5 @@
 package com.zyf.zojbackendserviceclient.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyf.zojbackendmodel.entity.Question;
 import com.zyf.zojbackendmodel.entity.QuestionSubmit;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 
  */
 @FeignClient(name = "zoj-backend-question-service", path = "/api/question/inner")
-public interface QuestionFeignClient extends IService<Question> {
+public interface QuestionFeignClient {
 
     /**
      * 根据 id 获取题目
@@ -29,6 +28,7 @@ public interface QuestionFeignClient extends IService<Question> {
     /**
      * 根据 id 获取题目提交记录
      *
+     * @param questionSubmitId
      * @return
      */
     @GetMapping("/question_submit/get/id")

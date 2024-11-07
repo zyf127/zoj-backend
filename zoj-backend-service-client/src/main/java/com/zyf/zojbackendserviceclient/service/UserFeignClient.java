@@ -1,7 +1,6 @@
 package com.zyf.zojbackendserviceclient.service;
 
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyf.zojbackendcommon.common.ErrorCode;
 import com.zyf.zojbackendcommon.exception.BusinessException;
 import com.zyf.zojbackendmodel.entity.User;
@@ -25,7 +24,7 @@ import static com.zyf.zojbackendcommon.constant.UserConstant.USER_LOGIN_STATE;
  * 
  */
 @FeignClient(name = "zoj-backend-user-service", path = "/api/user/inner")
-public interface UserFeignClient extends IService<User> {
+public interface UserFeignClient {
 
     /**
      * 根据 id 获取用户

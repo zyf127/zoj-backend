@@ -149,6 +149,13 @@ public class QuestionController {
         return ResultUtils.success(result);
     }
 
+    /**
+     * 根据 id 获取
+     *
+     * @param id
+     * @param request
+     * @return
+     */
     @GetMapping("/get")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
@@ -159,11 +166,16 @@ public class QuestionController {
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
+        User loginUser = userFeignClient.getLoginUser(request);
+        // 不是本人或管理员，不能直接获取所有信息
+        if (!question.getUserId().equals(loginUser.getId()) && !userFeignClient.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
         return ResultUtils.success(question);
     }
 
     /**
-     * 根据 id 获取
+     * 根据 id 获取（脱敏）
      *
      * @param id
      * @return
@@ -210,8 +222,7 @@ public class QuestionController {
         long size = questionQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Question> questionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
+        Page<Question> questionPage = questionService.page(new Page<>(current, size), questionService.getQueryWrapper(questionQueryRequest));
         return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
     }
 

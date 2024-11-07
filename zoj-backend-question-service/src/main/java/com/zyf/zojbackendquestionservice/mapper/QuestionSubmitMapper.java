@@ -2,6 +2,7 @@ package com.zyf.zojbackendquestionservice.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zyf.zojbackendmodel.entity.QuestionSubmit;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author zyf
@@ -9,6 +10,7 @@ import com.zyf.zojbackendmodel.entity.QuestionSubmit;
 * 
 * @Entity com.zyf.zoj.model.entity.QuestionSubmit
 */
+@Mapper
 public interface QuestionSubmitMapper extends BaseMapper<QuestionSubmit> {
 
 }
