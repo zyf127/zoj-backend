@@ -1,6 +1,7 @@
 package com.zyf.zojbackendquestionservice.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,11 +12,14 @@ import com.zyf.zojbackendcommon.exception.ThrowUtils;
 import com.zyf.zojbackendcommon.utils.SqlUtils;
 import com.zyf.zojbackendmodel.dto.question.QuestionQueryRequest;
 import com.zyf.zojbackendmodel.entity.Question;
+import com.zyf.zojbackendmodel.entity.QuestionSubmit;
 import com.zyf.zojbackendmodel.entity.User;
+import com.zyf.zojbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.zyf.zojbackendmodel.vo.QuestionVO;
 import com.zyf.zojbackendmodel.vo.UserVO;
 import com.zyf.zojbackendquestionservice.mapper.QuestionMapper;
 import com.zyf.zojbackendquestionservice.service.QuestionService;
+import com.zyf.zojbackendquestionservice.service.QuestionSubmitService;
 import com.zyf.zojbackendserviceclient.service.UserFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -24,9 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +43,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
     @Resource
     private UserFeignClient userFeignClient;
+
+    @Resource
+    private QuestionSubmitService questionSubmitService;
 
     @Override
     public void validQuestion(Question question, boolean add) {
@@ -136,6 +141,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         if (CollUtil.isEmpty(questionList)) {
             return questionVOPage;
         }
+        Set<Long> questionIdSet = questionList.stream().map(Question::getId).collect(Collectors.toSet());
+        LambdaQueryWrapper<QuestionSubmit> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(QuestionSubmit::getQuestionId, questionIdSet);
+        Map<Long, List<QuestionSubmit>> questionSubmitMap = questionSubmitService.list(queryWrapper).stream().collect(Collectors.groupingBy(QuestionSubmit::getQuestionId));
         // 关联查询用户信息
         Set<Long> userIdSet = questionList.stream().map(Question::getUserId).collect(Collectors.toSet());
         Map<Long, List<User>> userIdUserListMap = userFeignClient.listUserByIds(userIdSet).stream()
@@ -149,6 +158,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
                 user = userIdUserListMap.get(userId).get(0);
             }
             questionVO.setUserVO(userFeignClient.getUserVO(user));
+            List<QuestionSubmit> questionSubmitList = Optional.ofNullable(questionSubmitMap.get(question.getId())).orElse(new ArrayList<>());
+            questionVO.setSubmitNum(questionSubmitList.size());
+            questionVO.setAcceptedNum((int)questionSubmitList.stream().filter(questionSubmit -> QuestionSubmitStatusEnum.SUCCEED.getValue().equals(questionSubmit.getStatus())).count());
             return questionVO;
         }).collect(Collectors.toList());
         questionVOPage.setRecords(questionVOList);

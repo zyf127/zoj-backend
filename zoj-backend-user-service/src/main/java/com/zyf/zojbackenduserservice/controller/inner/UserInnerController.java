@@ -3,10 +3,7 @@ package com.zyf.zojbackenduserservice.controller.inner;
 import com.zyf.zojbackendmodel.entity.User;
 import com.zyf.zojbackendserviceclient.service.UserFeignClient;
 import com.zyf.zojbackenduserservice.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -45,4 +42,17 @@ public class UserInnerController implements UserFeignClient {
     public List<User> listUserByIds(@RequestParam("ids") Collection<Long> ids) {
         return userService.listByIds(ids);
     }
+
+    /**
+     * 获取当前登录用户
+     *
+     * @param authorization
+     * @return
+     */
+    @GetMapping("/get/login")
+    @Override
+    public User getLoginUser(@RequestHeader("Authorization") String authorization) {
+        return userService.getLoginUser(authorization);
+    }
+
 }

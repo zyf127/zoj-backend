@@ -20,7 +20,6 @@ import com.zyf.zojbackendquestionservice.mapper.QuestionSubmitMapper;
 import com.zyf.zojbackendquestionservice.rabbitmq.MyMessageProducer;
 import com.zyf.zojbackendquestionservice.service.QuestionService;
 import com.zyf.zojbackendquestionservice.service.QuestionSubmitService;
-import com.zyf.zojbackendserviceclient.service.JudgeFeignClient;
 import com.zyf.zojbackendserviceclient.service.UserFeignClient;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,14 +42,11 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     implements QuestionSubmitService {
 
     @Resource
+    @Lazy
     private QuestionService questionService;
 
     @Resource
     private UserFeignClient userFeignClient;
-
-    @Resource
-    @Lazy
-    private JudgeFeignClient judgeFeignClient;
 
     @Resource
     private MyMessageProducer myMessageProducer;

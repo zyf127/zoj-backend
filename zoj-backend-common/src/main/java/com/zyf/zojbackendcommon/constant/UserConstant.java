@@ -21,6 +21,11 @@ public interface UserConstant {
     String DEFAULT_ROLE = "user";
 
     /**
+     * 用户角色
+     */
+    String USER_ROLE = "user";
+
+    /**
      * 管理员角色
      */
     String ADMIN_ROLE = "admin";
