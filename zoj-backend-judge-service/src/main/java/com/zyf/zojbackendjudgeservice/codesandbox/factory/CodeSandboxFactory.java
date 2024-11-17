@@ -1,5 +1,6 @@
-package com.zyf.zojbackendjudgeservice.codesandbox;
+package com.zyf.zojbackendjudgeservice.codesandbox.factory;
 
+import com.zyf.zojbackendjudgeservice.codesandbox.CodeSandbox;
 import com.zyf.zojbackendjudgeservice.codesandbox.impl.ExampleCodeSandbox;
 import com.zyf.zojbackendjudgeservice.codesandbox.impl.RemoteCodeSandbox;
 import com.zyf.zojbackendjudgeservice.codesandbox.impl.ThirdPartyCodeSandbox;

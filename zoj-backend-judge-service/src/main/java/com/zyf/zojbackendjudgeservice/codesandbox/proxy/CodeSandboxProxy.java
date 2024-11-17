@@ -1,5 +1,6 @@
-package com.zyf.zojbackendjudgeservice.codesandbox;
+package com.zyf.zojbackendjudgeservice.codesandbox.proxy;
 
+import com.zyf.zojbackendjudgeservice.codesandbox.CodeSandbox;
 import com.zyf.zojbackendmodel.codesandbox.ExecuteCodeRequest;
 import com.zyf.zojbackendmodel.codesandbox.ExecuteCodeResponse;
 import lombok.AllArgsConstructor;

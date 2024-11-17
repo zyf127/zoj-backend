@@ -1,6 +1,6 @@
 package com.zyf.zojbackendjudgeservice.controller.inner;
 
-import com.zyf.zojbackendjudgeservice.codesandbox.JudgeService;
+import com.zyf.zojbackendjudgeservice.service.JudgeService;
 import com.zyf.zojbackendmodel.entity.QuestionSubmit;
 import com.zyf.zojbackendserviceclient.service.JudgeFeignClient;
 import org.springframework.web.bind.annotation.PostMapping;

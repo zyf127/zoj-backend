@@ -51,7 +51,7 @@ public class UserInnerController implements UserFeignClient {
      */
     @GetMapping("/get/login")
     @Override
-    public User getLoginUser(@RequestHeader("Authorization") String authorization) {
+    public User getLoginUser(@RequestHeader(name = "Authorization", required = false) String authorization) {
         return userService.getLoginUser(authorization);
     }
 
