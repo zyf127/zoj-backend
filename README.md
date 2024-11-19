@@ -1,7 +1,7 @@
 # Z-OJ 在线判题系统
 ## 电脑端网站
 ## 界面展示
-### 用户登录、用户注册
+### 用户注册、用户登录
 <img src="https://github.com/zyf127/zoj-backend/blob/master/img/%E7%94%A8%E6%88%B7%E6%B3%A8%E5%86%8C.png">
 <img src="https://github.com/zyf127/zoj-backend/blob/master/img/%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95.png">
 
