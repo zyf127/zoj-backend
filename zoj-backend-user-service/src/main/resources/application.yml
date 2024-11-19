@@ -45,7 +45,3 @@ mybatis-plus:
 knife4j:
   enable: true
 
-# JWT密钥
-jwt:
-  secret: 031be7409d9dfb181df8a09b1a47b834cb97a9626c519300a30c1c669fd613f1
-
