@@ -2,6 +2,7 @@ package com.zyf.zojbackendquestionservice.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyf.zojbackendcommon.common.ErrorCode;
@@ -79,6 +80,13 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (!save) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "提交题目失败");
         }
+        // 更新题目提交数
+        LambdaUpdateWrapper<Question> updateWrapper = new LambdaUpdateWrapper();
+        updateWrapper.setSql("submit_num = submit_num + 1").eq(Question::getId, questionId);
+        boolean update = questionService.update(updateWrapper);
+        if (!update) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新题目提交数失败");
+        }
         // 进行判题
         Long questionSubmitId = questionSubmit.getId();
 //        CompletableFuture.runAsync(() -> {
@@ -125,8 +133,8 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser) {
         QuestionSubmitVO questionSubmitVO = QuestionSubmitVO.objToVo(questionSubmit);
         // 脱敏：仅本人和管理员能看见自己提交的代码
-        long userId = loginUser.getId();
-        if (userId != questionSubmitVO.getUserId() && !userFeignClient.isAdmin(loginUser)) {
+        Long userId = loginUser.getId();
+        if (!questionSubmitVO.getUserId().equals(userId) && !userFeignClient.isAdmin(loginUser)) {
             questionSubmitVO.setCode(null);
         }
         return questionSubmitVO;

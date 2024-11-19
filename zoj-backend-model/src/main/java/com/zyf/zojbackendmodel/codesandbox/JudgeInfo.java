@@ -13,9 +13,9 @@ public class JudgeInfo {
     private String message;
 
     /**
-     * 消耗内存（MB）
+     * 消耗内存（KB）
      */
-    private Double memory;
+    private Long memory;
 
     /**
      * 消耗时间（ms）

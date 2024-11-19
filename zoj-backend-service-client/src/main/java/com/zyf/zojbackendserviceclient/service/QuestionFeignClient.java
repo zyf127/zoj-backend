@@ -42,4 +42,10 @@ public interface QuestionFeignClient {
      */
     @PostMapping("/question_submit/update")
     boolean updateQuestionSubmitById(@RequestBody QuestionSubmit questionSubmit);
+
+    /**
+     * 题目通过数加 1
+     */
+    @PostMapping("/question/increment")
+    boolean incrementQuestionAcceptedNum(@RequestParam("questionId") Long questionId);
 }

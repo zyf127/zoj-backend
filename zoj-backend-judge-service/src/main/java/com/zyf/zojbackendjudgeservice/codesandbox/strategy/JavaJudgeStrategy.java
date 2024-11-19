@@ -29,14 +29,14 @@ public class JavaJudgeStrategy implements JudgeStrategy {
         }
         // 判断用例是否全部通过
         for (int i = 0; i < actualOutputList.size(); i++) {
-            if (!actualOutputList.get(i).equals(standardOutputList.get(i))) {
+            if (!actualOutputList.get(i).trim().equals(standardOutputList.get(i).trim())) {
                 judgeInfoMessageEnum = JudgeInfoMessageEnum.WRONG_ANSWER;
                 judgeInfoResponse.setMessage(judgeInfoMessageEnum.getValue());
                 return judgeInfoResponse;
             }
         }
         Long time = Optional.ofNullable(judgeInfo.getTime()).orElse(0L);
-        Double memory = Optional.ofNullable(judgeInfo.getMemory()).orElse(0.0);
+        Long memory = Optional.ofNullable(judgeInfo.getMemory()).orElse(0L);
         // 判断是否超时
         if (time > judgeConfig.getTimeLimit()) {
             judgeInfoMessageEnum = JudgeInfoMessageEnum.TIME_LIMIT_EXCEEDED;

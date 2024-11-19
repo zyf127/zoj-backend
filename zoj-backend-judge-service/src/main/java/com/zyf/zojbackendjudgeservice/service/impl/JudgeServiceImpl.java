@@ -6,9 +6,9 @@ import com.zyf.zojbackendcommon.exception.BusinessException;
 import com.zyf.zojbackendjudgeservice.codesandbox.CodeSandbox;
 import com.zyf.zojbackendjudgeservice.codesandbox.factory.CodeSandboxFactory;
 import com.zyf.zojbackendjudgeservice.codesandbox.proxy.CodeSandboxProxy;
-import com.zyf.zojbackendjudgeservice.service.JudgeService;
 import com.zyf.zojbackendjudgeservice.codesandbox.strategy.JudgeContext;
 import com.zyf.zojbackendjudgeservice.codesandbox.strategy.JudgeManager;
+import com.zyf.zojbackendjudgeservice.service.JudgeService;
 import com.zyf.zojbackendmodel.codesandbox.ExecuteCodeRequest;
 import com.zyf.zojbackendmodel.codesandbox.ExecuteCodeResponse;
 import com.zyf.zojbackendmodel.codesandbox.JudgeInfo;
@@ -16,6 +16,7 @@ import com.zyf.zojbackendmodel.dto.question.JudgeCase;
 import com.zyf.zojbackendmodel.dto.question.JudgeConfig;
 import com.zyf.zojbackendmodel.entity.Question;
 import com.zyf.zojbackendmodel.entity.QuestionSubmit;
+import com.zyf.zojbackendmodel.enums.JudgeInfoMessageEnum;
 import com.zyf.zojbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.zyf.zojbackendserviceclient.service.QuestionFeignClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,6 +89,13 @@ public class JudgeServiceImpl implements JudgeService {
         update = questionFeignClient.updateQuestionSubmitById(questionSubmitUpdate);
         if (!update) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目提交信息状态更新错误");
+        }
+        // 更新题目通过数
+        if (JudgeInfoMessageEnum.ACCEPTED.getValue().equals(judgeInfo.getMessage())) {
+            update = questionFeignClient.incrementQuestionAcceptedNum(question.getId());
+            if (!update) {
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新题目通过数失败");
+            }
         }
         return questionFeignClient.getQuestionSubmitById(questionSubmitId);
     }

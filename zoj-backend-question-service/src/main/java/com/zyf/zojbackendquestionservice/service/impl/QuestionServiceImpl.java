@@ -14,7 +14,6 @@ import com.zyf.zojbackendmodel.dto.question.QuestionQueryRequest;
 import com.zyf.zojbackendmodel.entity.Question;
 import com.zyf.zojbackendmodel.entity.QuestionSubmit;
 import com.zyf.zojbackendmodel.entity.User;
-import com.zyf.zojbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.zyf.zojbackendmodel.vo.QuestionVO;
 import com.zyf.zojbackendmodel.vo.UserVO;
 import com.zyf.zojbackendquestionservice.mapper.QuestionMapper;
@@ -158,9 +157,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
                 user = userIdUserListMap.get(userId).get(0);
             }
             questionVO.setUserVO(userFeignClient.getUserVO(user));
-            List<QuestionSubmit> questionSubmitList = Optional.ofNullable(questionSubmitMap.get(question.getId())).orElse(new ArrayList<>());
-            questionVO.setSubmitNum(questionSubmitList.size());
-            questionVO.setAcceptedNum((int)questionSubmitList.stream().filter(questionSubmit -> QuestionSubmitStatusEnum.SUCCEED.getValue().equals(questionSubmit.getStatus())).count());
             return questionVO;
         }).collect(Collectors.toList());
         questionVOPage.setRecords(questionVOList);

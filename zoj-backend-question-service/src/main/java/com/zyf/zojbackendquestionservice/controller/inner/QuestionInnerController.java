@@ -1,5 +1,6 @@
 package com.zyf.zojbackendquestionservice.controller.inner;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.zyf.zojbackendmodel.entity.Question;
 import com.zyf.zojbackendmodel.entity.QuestionSubmit;
 import com.zyf.zojbackendquestionservice.service.QuestionService;
@@ -53,8 +54,17 @@ public class QuestionInnerController implements QuestionFeignClient {
      * @return
      */
     @PostMapping("/question_submit/update")
+    @Override
     public boolean updateQuestionSubmitById(@RequestBody QuestionSubmit questionSubmit) {
         return questionSubmitService.updateById(questionSubmit);
+    }
+
+    @PostMapping("/question/increment")
+    @Override
+    public boolean incrementQuestionAcceptedNum(Long questionId) {
+        LambdaUpdateWrapper<Question> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.setSql("accepted_num = accepted_num + 1").eq(Question::getId, questionId);
+        return questionService.update(updateWrapper);
     }
 
 }
